@@ -115,7 +115,8 @@ static NSString * const reuseIdentifier = @"IconCell";
         [cell.disposable dispose];
     }
     
-    // Subscribes the cell to the related RACSignal and sets its disposable for future disposal
+    // Subscribes the cell to the related RACSignal and sets its disposable for future disposal.
+    // Ensures that the block will be executed on the main thread since it is a UI operation.
     cell.disposable = [[imageSignals[indexPath.row] deliverOn: RACScheduler.mainThreadScheduler]
      subscribeNext:^(UIImage *image) {
          
