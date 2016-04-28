@@ -41,7 +41,13 @@ static NSString * const reuseIdentifier = @"IconCell";
     
     // Begin loading all images asynchronously
     for (NSString *imagePath in imageURLs) {
-        [imageSignals addObject:[self loadFromURLString:imagePath]];
+        RACSignal *signal = [self loadFromURLString:imagePath];
+        [imageSignals addObject:signal];
+        
+        // So that all images being downloading immedeately
+        [signal subscribeNext:^(UIImage *image) {
+            cache[imagePath] = image;
+        }];
     }
 }
 
@@ -58,6 +64,8 @@ static NSString * const reuseIdentifier = @"IconCell";
         // If it is not, then load it from the web
         if(!image) {
             
+            
+            NSLog(@"Fetching image");
             // ISSUE: Images don't load until the signal is attached to a cell
             
             NSURL *url = [NSURL URLWithString:urlString];
